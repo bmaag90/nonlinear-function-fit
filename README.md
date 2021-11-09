@@ -6,7 +6,8 @@ A simple app built with [streamlit.io](https://streamlit.io/) that performs nonl
 
 Currently supported methods:
 1. Locally weighted regression
-2. Neural network
+2. k-Nearest Neighbours
+3. Neural network
 
 <img src="https://github.com/bmaag90/nonlinear-function-fit/blob/main/img/screenshot_1.png" width=33% height=33%>
 
