@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 import numpy as np
 from utils import *
 from nn_keras import NN_Keras
+from knn import *
 from locally_weighted_regression import *
 
 # Set page layout to wide
@@ -28,7 +29,7 @@ X, y, X_linspace = create_dataset(x_start, x_end, x_step, noise_mu, noise_sigma,
 
 # Select approach to approximate
 option = st.selectbox('Select approach',
-                      ('Locally Weighted Regression', 'Neural Network'))
+                      ('Locally Weighted Regression', 'k-Nearest Neighbours', 'Neural Network'))
 
 # Initial option - locally weighted regression
 if option == 'Locally Weighted Regression':
@@ -39,6 +40,34 @@ if option == 'Locally Weighted Regression':
     tau =  st.number_input('Tau - kernel width', value=0.2)
     # Run model fit
     yhat = predict_weighted_regression(X, X_linspace, y, tau)
+    # Plot results
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=X, 
+                            y=y, 
+                            mode='markers', 
+                            marker_color='rgba(0,0,0,0.5)',
+                            name='Training data'))
+    fig.add_trace(go.Scatter(x=X_linspace, 
+                            y=yhat.squeeze(), 
+                            mode='markers', 
+                            marker_color='rgba(255,0,0,1)',
+                            name='Predictions'))       
+    fig.add_trace(go.Scatter(x=X_linspace, 
+                            y=eval_fx(X_linspace, str_fx), 
+                            mode='lines', 
+                            line_color='rgba(51,255,255,0.7)',
+                            name='Underlying function'))
+    
+    st.plotly_chart(fig)
+
+elif option == 'k-Nearest Neighbours':
+    st.header('k-Nearest Neighbours')
+
+    st.write('For each test point we look for the k-nearest neighbours in the dataset and predict its output value by the mean over all output values of the neighbours.')
+    # Parameter: tau - the kernel width
+    k =  st.number_input('K - Number of neighbours', value=5)
+    # Run model fit
+    yhat = knn_regression(X, X_linspace, y, k)
     # Plot results
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=X, 
